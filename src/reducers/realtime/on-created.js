@@ -5,7 +5,7 @@ const onCreated = (state, payload) => {
 
   const updateResult = (list, item) => {
     const items = Array.isArray(list) ? list : [];
-    return [...items, item];
+    return [].concat(items, item);
   };
 
   const tempState = updateRootFindResult(state, payload, updateResult);

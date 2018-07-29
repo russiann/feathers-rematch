@@ -4,7 +4,7 @@ import snapshot from './plugins/snapshot-plugin';
 import auth from './plugins/auth-plugin';
 import createAuthModel from './authentication';
 
-const init = ({ restClient, socketClient, transport, socket, services, authentication, ...config }) => {
+const init = ({ restClient, socketClient, transport, socket, services, authentication }) => {
 
   const models = services.reduce((obj, service) => {
     
@@ -19,10 +19,9 @@ const init = ({ restClient, socketClient, transport, socket, services, authentic
 
     const model = createModel(config);
 
-    return {
-      ...obj,
+    return Object.assign(obj, {
       [service.name]: model
-    };
+    })
   }, {});
 
   /**

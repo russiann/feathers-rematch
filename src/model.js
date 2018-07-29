@@ -1,6 +1,6 @@
 import Immutable from 'seamless-immutable';
-import { request, response, error, store, onCreated, onPatched, onRemoved, onUpdated } from './reducers';
-import { find, get, create, update, patch, remove } from './effects';
+import { request, response, error, store, onCreated, onPatched, onRemoved, onUpdated } from './reducers/index.js';
+import { find, get, create, update, patch, remove } from './effects/index.js';
 
 const defaultState = {
   find: {},

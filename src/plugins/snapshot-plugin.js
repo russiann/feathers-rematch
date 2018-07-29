@@ -17,8 +17,7 @@ export default () => {
         if (model.snapshot.publications) {
           publications = Object
             .keys(model.snapshot.publications)
-            .reduce((state, publicationName) => ({
-              ...state,
+            .reduce((state, publicationName) => Object.assign(state, {
               [publicationName]: records.filter(model.snapshot.publications[publicationName])
             }), {})
         }

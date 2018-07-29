@@ -1,0 +1,32 @@
+{
+  "name": "feathers-rematch",
+  "version": "0.0.1",
+  "description": "> Short blurb about what your product does.",
+  "source": "src",
+  "repository": "git+https://github.com/russiann/feathers-rematch.git",
+  "author": "Russian Rebouças <russian.reboucas@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/russiann/feathers-rematch#readme",
+  "dependencies": {
+    "feathers-offline-realtime": "^0.1.2",
+    "lodash": "^4.17.10",
+    "seamless-immutable": "^7.1.3"
+  },
+  "devDependencies": {
+    "rollup": "^0.63.4",
+    "rollup-plugin-commonjs": "^9.1.0",
+    "rollup-plugin-node-resolve": "^3.0.0"
+  },
+  "main": "dist/feathers-rematch.cjs.js",
+  "module": "dist/feathers-rematch.esm.js",
+  "browser": "dist/feathers-rematch.umd.js",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "node test/test.js",
+    "pretest": "npm run build"
+  },
+  "files": [
+    "dist"
+  ]
+}
