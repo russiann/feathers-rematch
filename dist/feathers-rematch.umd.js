@@ -2254,7 +2254,7 @@
 	  return {
 	    onModel(model) {
 	      // do something
-	      if (!model.services) return;
+	      if (!model.services || !model.services.socket) return;
 
 	      const reducers = {
 	        'created': 'onCreated',
@@ -5276,7 +5276,7 @@
 
 	      if (!model.snapshot) return;
 	      if (!model.services.socket && !model.clients.socket) {
-	        throw new Error('Snapshot Plugin: A socket client must be provided on initialization!')
+	        return console.error('Snapshot Plugin: A socket client must be provided on initialization!');
 	      }
 
 	      const serviceRealtime = new Realtime(model.services.socket, model.snapshot);
@@ -5421,8 +5421,8 @@
 	    
 	    const config = {
 	      modelName: service.name,
-	      rest: restClient.service(service.path),
-	      socket: socketClient.service(service.path),
+	      rest: restClient && restClient.service(service.path),
+	      socket: socketClient && socketClient.service(service.path),
 	      snapshot: service.snapshot,
 	      clients: { socket: socketClient, rest: restClient },
 	      transport

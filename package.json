@@ -1,6 +1,6 @@
 {
   "name": "feathers-rematch",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Models for Feathers services (+ Synced Snapshots, + Authentication)",
   "source": "src",
   "repository": "git+https://github.com/russiann/feathers-rematch.git",
