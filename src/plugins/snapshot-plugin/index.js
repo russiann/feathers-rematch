@@ -9,7 +9,7 @@ export const snapshotPlugin = () => {
 
       if (!model.snapshot) return;
       if (!model.services.socket && !model.clients.socket) {
-        throw new Error('Snapshot Plugin: A socket client must be provided on initialization!')
+        return console.error('Snapshot Plugin: A socket client must be provided on initialization!');
       }
 
       const serviceRealtime = new Realtime(model.services.socket, model.snapshot);

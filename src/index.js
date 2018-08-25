@@ -10,8 +10,8 @@ const init = ({ restClient, socketClient, transport, socket, services, authentic
     
     const config = {
       modelName: service.name,
-      rest: restClient.service(service.path),
-      socket: socketClient.service(service.path),
+      rest: restClient && restClient.service(service.path),
+      socket: socketClient && socketClient.service(service.path),
       snapshot: service.snapshot,
       clients: { socket: socketClient, rest: restClient },
       transport

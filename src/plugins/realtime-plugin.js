@@ -2,7 +2,7 @@ export default () => {
   return {
     onModel(model) {
       // do something
-      if (!model.services) return;
+      if (!model.services || !model.services.socket) return;
 
       const reducers = {
         'created': 'onCreated',
