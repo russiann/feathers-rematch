@@ -1,6 +1,9 @@
 import Realtime from 'feathers-offline-realtime';
+import model from './model';
 
-export default () => {
+export const snapshotModel = model;
+
+export const snapshotPlugin = () => {
   return {
     onModel(model) {
 
@@ -31,17 +34,21 @@ export default () => {
       });
 
       const sync = (authData) => {
+        console.log('addSnapshot')
+        this.dispatch.snapshots.addSnapshot({ name: model.name });
         const { verifier } = model.snapshot;
         if (verifier && !verifier(authData)) return false;
         
         serviceRealtime
           .connect()
           .then(() => {
+            this.dispatch.snapshots.setsynced({ name: model.name });
             console.debug('%c' + `[${model.name}] snapshot syncronized.`.toUpperCase(), 'color: #2196F3');
           })
-          .catch(err => {
+          .catch(error => {
+            this.dispatch.snapshots.setErrorOnSync({ name: model.name, error });
             console.debug('%c' + `[${model.name}] snapshot failed.`.toUpperCase(), 'color: #ff0000');
-            console.error(err)
+            console.error(error);
           });
       };
 
@@ -55,7 +62,10 @@ export default () => {
           model.clients.socket.authenticate({ strategy: 'jwt', accessToken }).then(sync);
         });
       } else {
-        sync();
+        setTimeout(() => {
+          sync();
+          
+        }, 1);
       }
 
     }

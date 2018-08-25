@@ -5218,7 +5218,59 @@
 
 	var Realtime = unwrapExports(lib$2);
 
-	var snapshotPlugin = () => {
+	const defaultState$1 = {
+	  loading: true,
+	  synced: false,
+	  services: {}
+	};
+
+	const snapshots = {
+	  name: 'snapshots',
+	  state: new seamlessImmutable(defaultState$1),
+	  reducers: {
+	    addSnapshot(state, { name }) {
+	      return state.setIn(['services', name], {
+	        loading: true,
+	        synced: false,
+	        error: null
+	      });
+	    },
+
+	    setsynced(state, { name }) {
+	      const updatedState = state.setIn(['services', name], {
+	        loading: false,
+	        synced: true,
+	        error: null
+	      });
+
+	      const isAllSynced = Object.keys(updatedState.services).every(key => updatedState.services[key].synced);
+	      const isSomeLoading = Object.keys(updatedState.services).some(key => updatedState.services[key].loading);
+
+	      return updatedState.merge({
+	        synced: isAllSynced,
+	        loading: isSomeLoading
+	      });
+	    },
+	    
+	    setErrorOnSync(state, { name, error }) {
+	      const updatedState = state.setIn(['services', name], {
+	        loading: false,
+	        synced: false,
+	        error
+	      });
+
+	      const isSomeLoading = Object.keys(updatedState.services).some(key => updatedState.services[key].loading);
+
+	      return updatedState.merge({
+	        loading: isSomeLoading
+	      });
+	    }
+	  }
+	};
+
+	const snapshotModel = snapshots;
+
+	const snapshotPlugin = () => {
 	  return {
 	    onModel(model) {
 
@@ -5249,17 +5301,21 @@
 	      });
 
 	      const sync = (authData) => {
+	        console.log('addSnapshot');
+	        this.dispatch.snapshots.addSnapshot({ name: model.name });
 	        const { verifier } = model.snapshot;
 	        if (verifier && !verifier(authData)) return false;
 	        
 	        serviceRealtime
 	          .connect()
 	          .then(() => {
+	            this.dispatch.snapshots.setsynced({ name: model.name });
 	            console.debug('%c' + `[${model.name}] snapshot syncronized.`.toUpperCase(), 'color: #2196F3');
 	          })
-	          .catch(err => {
+	          .catch(error => {
+	            this.dispatch.snapshots.setErrorOnSync({ name: model.name, error });
 	            console.debug('%c' + `[${model.name}] snapshot failed.`.toUpperCase(), 'color: #ff0000');
-	            console.error(err);
+	            console.error(error);
 	          });
 	      };
 
@@ -5273,7 +5329,10 @@
 	          model.clients.socket.authenticate({ strategy: 'jwt', accessToken }).then(sync);
 	        });
 	      } else {
-	        sync();
+	        setTimeout(() => {
+	          sync();
+	          
+	        }, 1);
 	      }
 
 	    }
@@ -5302,7 +5361,7 @@
 	  }
 	};
 
-	const defaultState$1 = {
+	const defaultState$2 = {
 	  error: null,
 	  loading: null,
 	  signedIn: false,
@@ -5313,7 +5372,7 @@
 	var createAuthModel = ({ rest, socket, transport = 'socket' }) => {
 
 	  const model = {
-	    state: new seamlessImmutable(defaultState$1),
+	    state: new seamlessImmutable(defaultState$2),
 	    clients: { rest, socket },
 	    reducers: {
 	      finished(state, { accessToken, user}) {
@@ -5392,9 +5451,15 @@
 	  return { models };
 	};
 
+	const snapshot = {
+	  model: snapshotModel,
+	  plugin: snapshotPlugin
+	};
+	console.log(1, snapshot);
+
 	exports.init = init;
 	exports.realtime = realtimePlugin;
-	exports.snapshot = snapshotPlugin;
+	exports.snapshot = snapshot;
 	exports.auth = authPlugin;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
